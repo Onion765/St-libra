@@ -1,0 +1,169 @@
+/* カラーパレット */
+:root {
+    --bg-color: #F5EEDD;
+    --accent-light: #7AE2CF;
+    --accent-dark: #077A7D;
+    --text-dark: #06202B;
+}
+
+/*全画面*/
+body {
+    margin: 0;
+    font-family: "Georgia", "Times New Roman", serif;
+    background-color: var(--bg-color);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+/*ヘッダー*/
+header {
+    background: var(--accent-dark);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 90vw;
+
+    color: white;
+    padding: 0.5rem 1rem;
+    display: flex;           
+    align-items: center;    
+    gap: 1rem;
+
+    border-radius: 1.5rem;     
+    margin: 1vw 2vw;           /* 画面端から少し余白 */
+    z-index: 10;               /* 他要素より前面 */
+    box-shadow: 0 2px 8px var(--bg-color);               
+}
+
+header img {
+    width: 50px;             /* アイコンサイズ */
+    height: 50px;
+    border-radius: 50%;      /* 丸くする */
+    border: 2px solid var(--accent-light);
+    object-fit: cover;       /* 画像がはみ出さないように */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+nav {
+    display: flex;
+    justify-content: right;
+    gap: 1.5rem;
+    padding: 0.8rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: var(--text-dark);
+}
+
+/*メイン画像*/
+.background_img {
+    position: relative; 
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.background_img img {
+    width: 100vw;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.7);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+.title {
+    color: var(--bg-color);
+    text-shadow: 2px 2px 5px white;
+    z-index: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.title > h1 {
+    font-size: 4rem;
+}
+
+.background_img > div {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+    text-align: center;
+}
+
+/*記事などのmain部分*/
+
+main {
+    position: relative;
+    z-index: 2;
+    color: var(--text-dark);
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(255,255,255,0.85);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+@media (max-width: 600px) {
+    main {
+        max-width: 94vw;
+        padding: 1rem;
+        margin: 1rem auto;
+        border-radius: 8px;
+    }
+}
+
+.article a {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    color: var(--text-dark); /* タイトルと日付をtext-darkに */
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+}
+
+.article a h3 {
+    color: var(--text-dark); /* タイトルもtext-dark */
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.article .date {
+    color: var(--text-dark); /* 日付もtext-dark */
+    margin-right: 1rem;
+    margin-left: 0;
+    font-size: 1rem;
+    opacity: 0.7;
+    min-width: 100px; /* 左端に揃えやすくする */
+    text-align: left;
+}
+
+/*フッター*/
+footer {
+    margin-top: 2rem;
+    background: var(--text-dark);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+}

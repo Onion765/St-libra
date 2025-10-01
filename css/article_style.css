@@ -1,0 +1,153 @@
+/* カラーパレット */
+:root {
+    --bg-color: #F5EEDD;
+    --accent-light: #7AE2CF;
+    --accent-dark: #077A7D;
+    --text-dark: #06202B;
+}
+
+body {
+    margin: 0;
+    font-family: "Georgia", "Times New Roman", serif;
+    background-color: var(--bg-color);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+header {
+    background: var(--accent-dark);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 90vw;
+
+    color: white;
+    padding: 0.5rem 1rem;
+    display: flex;           
+    align-items: center;    
+    gap: 1rem;
+
+    border-radius: 1.5rem;     
+    margin: 1vw 2vw;           /* 画面端から少し余白 */
+    z-index: 10;               /* 他要素より前面 */
+    box-shadow: 0 2px 8px var(--bg-color);               
+}
+
+header img {
+    width: 50px;             /* アイコンサイズ */
+    height: 50px;
+    border-radius: 50%;      /* 丸くする */
+    border: 2px solid var(--accent-light);
+    object-fit: cover;       /* 画像がはみ出さないように */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+nav {
+    display: flex;
+    justify-content: right;
+    gap: 1.5rem;
+    padding: 0.8rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: var(--text-dark);
+}
+
+/* ===== Articles.html 用（2カラム＋背景画像あり） ===== */
+body.articles-page {
+    background-color: var(--bg-color);
+}
+
+main {
+    margin-top: 100px;
+    padding: 3rem;
+    margin-left: 2rem;
+    color: var(--text-dark);
+}
+
+.article-list > .article-item {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+
+    margin: 2rem auto;
+    max-width: 700px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-dark); 
+}
+
+.article-list > .article-item a {
+    font-size: larger;
+    color: var(--text-dark); /* リンクの色も統一 */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.article-list > .article-item a:hover {
+    text-decoration: underline;
+}
+
+.article-list .date {
+    font-size: 1rem;
+    color: var(--text-dark);
+    opacity: 0.7;
+}
+
+
+/* ===== 各記事ページ用（1カラム・背景なし） ===== */
+body.article-page {
+    background: var(--bg-color);
+}
+
+.article-wrapper {
+    max-width: 800px;
+    width: 90vw;               /* 画面幅の90%まで広げる */
+    margin: 2rem auto;
+    margin-top: 100px;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    box-sizing: border-box;
+}
+
+.article-wrapper h2 {
+    color: var(--text-dark); 
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 0.5em;
+    margin-bottom: 0em;
+}
+
+
+
+@media (max-width: 600px) {
+    .article-wrapper {
+        padding: 1rem;
+        margin-top: 70px;
+    }
+}
+
+/* フッター */
+footer {
+    margin-top: 2rem;
+    background: var(--text-dark);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+}

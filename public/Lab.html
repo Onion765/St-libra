@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Articles | My Portfolio</title>
+  <link rel="stylesheet" href="../css/Lab_style.css">
+</head>
+<body>
+  <header>
+    <h1>Laboratory</h1>
+    <nav>
+      <a href="../index.html">Top</a>
+      <a href="About.html">About</a>
+      <a href="Articles.html">Articles</a>
+      <a href="Works.html">Works</a>
+      <a href="Lab.html">Lab</a>
+      
+    </nav>
+  </header>
+
+  <main>
+    <article>
+      <h2>記事タイトル例：ROS入門メモ</h2>
+      <p class="meta">投稿日: 2025-09-24 | カテゴリ: ROS</p>
+      <p>
+        今日はROSの環境構築をやった。Ubuntuでのセットアップは思ったよりスムーズだったが、
+        ワークスペースの作り方で少しつまずいた。以下にコマンドをまとめる。
+      </p>
+      <pre><code>mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/
+catkin_make
+      </code></pre>
+      <p>
+        今後はサンプルノードを動かしてみたい。
+      </p>
+    </article>
+
+    <!-- 2つめの記事 -->
+    <article>
+      <h2>記事タイトル例：PID制御の基礎</h2>
+      <p class="meta">投稿日: 2025-09-20 | カテゴリ: 制御理論</p>
+      <p>
+        PID制御の数式を整理。P制御だけでは定常偏差が残るため、I項を導入する。
+        実装のときは微分項のノイズに注意が必要。
+      </p>
+    </article>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Shopping Onion</p>
+  </footer>
+</body>
+</html>
