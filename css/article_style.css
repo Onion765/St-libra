@@ -114,6 +114,11 @@ body.article-page {
     background: var(--bg-color);
 }
 
+.article-page img {
+    height: 500px;
+    width: 700px;
+}
+
 .article-wrapper {
     max-width: 800px;
     width: 90vw;               /* 画面幅の90%まで広げる */

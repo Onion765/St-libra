@@ -7,14 +7,12 @@
 }
 
 body {
-    margin-top: 100px;
+    margin: 0;
     font-family: "Georgia", "Times New Roman", serif;
     background-color: var(--bg-color);
     color: var(--text-dark);
     line-height: 1.6;
 }
-
-
 
 header {
     background: var(--accent-dark);
@@ -66,37 +64,99 @@ nav a:hover {
     color: var(--text-dark);
 }
 
+/* ===== lab.html 用（2カラム＋背景画像あり） ===== */
+body.articles-page {
+    background-color: var(--bg-color);
+}
 
 main {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-article {
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #ddd;
-}
-article h2 {
-  margin-top: 0;
-  color: #0055aa;
-}
-article .meta {
-  font-size: 0.9rem;
-  color: #777;
-}
-nav a {
-  margin: 0 10px;
-  color: #fff;
-  text-decoration: none;
-}
-nav a:hover {
-  text-decoration: underline;
+    margin-top: 100px;
+    padding: 3rem;
+    margin-left: 2rem;
+    color: var(--text-dark);
 }
 
+.lab-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: flex-start;
+    margin-top: 2rem;
+}
+
+.lab-list > .lab-item {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+
+    color: var(--text-dark);
+    min-width: 220px;
+    max-width: 300px;
+    flex: 1 1 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.lab-list > .lab-item a {
+    font-size: larger;
+    color: var(--text-dark); 
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.lab-list > .lab-item a:hover {
+    text-decoration: underline;
+}
+
+.lab-list .date {
+    font-size: 1rem;
+    color: var(--text-dark);
+    opacity: 0.7;
+}
+
+
+/* ===== 各記事ページ用（1カラム・背景なし） ===== */
+body.lab-page {
+    background: var(--bg-color);
+}
+
+.lab-page img {
+    height: 500px;
+    width: 700px;
+}
+
+.lab-wrapper {
+    max-width: 800px;
+    width: 90vw;               /* 画面幅の90%まで広げる */
+    margin: 2rem auto;
+    margin-top: 100px;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    box-sizing: border-box;
+}
+
+.lab-wrapper h2 {
+    color: var(--text-dark); 
+    border-bottom: 2px solid var(--accent-light);
+    padding-bottom: 0.5em;
+    margin-bottom: 0em;
+}
+
+
+
+@media (max-width: 600px) {
+    .lab-wrapper {
+        padding: 1rem;
+        margin-top: 70px;
+    }
+}
+
+/* フッター */
 footer {
     margin-top: 2rem;
     background: var(--text-dark);

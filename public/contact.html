@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact</title>
+    <style>
+        body {
+            font-family: "Georgia", "Times New Roman", serif;
+            background: #F5EEDD;
+            color: #06202B;
+        }
+        .contact-form {
+            max-width: 400px;
+            margin: 3rem auto;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .contact-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 0.7rem;
+            margin-bottom: 1rem;
+            border: 1px solid #7AE2CF;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .contact-form button {
+            background: #7AE2CF;
+            color: #06202B;
+            border: none;
+            padding: 0.7rem 2rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .contact-form button:hover {
+            background: #077A7D;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Contact</h1>
+    <form class="contact-form">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+
+        <button type="submit">Send</button>
+    </form>
+
+    <footer>
+    <p>© 2025 Shopping Onion</p>
+    <a href="./public/contact.html">contact</a>
+  </footer>
+</body>
+</html>
