@@ -65,6 +65,44 @@ nav a:hover {
     color: var(--text-dark);
 }
 
+/*PC*/
+@media (min-width: 769px) {
+  .menu-btn {
+    display: none; 
+  }
+
+  .nav {
+    display: flex;
+  }
+}
+
+/* スマホ画面ではハンバーガーメニューに */
+@media (max-width: 768px) {
+  .menu-btn {
+    font-size: 1.8rem;
+    background-color: none;
+    border: none;
+    background-color: #077A7D;
+    color: white;
+    cursor: pointer;
+    justify-content: right;
+  }
+
+  .nav {
+    display: none; /* 最初は非表示 */
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .nav a {
+    margin: 10px 0;
+  }
+
+  .nav.active {
+    display: flex;
+  }
+}
+
 /*メイン画像*/
 .background_img {
     position: relative; 
