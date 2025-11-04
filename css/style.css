@@ -35,9 +35,9 @@ header {
 }
 
 header img {
-    width: 50px;             /* アイコンサイズ */
+    width: 50px;             
     height: 50px;
-    border-radius: 50%;      /* 丸くする */
+    border-radius: 50%;      
     border: 2px solid var(--accent-light);
     object-fit: cover;       /* 画像がはみ出さないように */
 }
@@ -85,11 +85,12 @@ nav a:hover {
     background-color: #077A7D;
     color: white;
     cursor: pointer;
-    justify-content: right;
+    text-align: right;
   }
 
+
   .nav {
-    display: none; /* 最初は非表示 */
+    display: none;
     flex-direction: column;
     padding: 10px;
   }
@@ -174,25 +175,25 @@ main {
     align-items: center;
     justify-content: flex-start;
     gap: 1rem;
-    color: var(--text-dark); /* タイトルと日付をtext-darkに */
+    color: var(--text-dark); 
     text-decoration: none;
     margin-bottom: 1.5rem;
 }
 
 .article a h3 {
-    color: var(--text-dark); /* タイトルもtext-dark */
+    color: var(--text-dark); 
     margin: 0;
     font-size: 1.2rem;
     font-weight: bold;
 }
 
 .article .date {
-    color: var(--text-dark); /* 日付もtext-dark */
+    color: var(--text-dark);
     margin-right: 1rem;
     margin-left: 0;
     font-size: 1rem;
     opacity: 0.7;
-    min-width: 100px; /* 左端に揃えやすくする */
+    min-width: 100px; 
     text-align: left;
 }
 
