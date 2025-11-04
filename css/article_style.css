@@ -1,75 +1,11 @@
-/* カラーパレット */
-:root {
-    --bg-color: #F5EEDD;
-    --accent-light: #7AE2CF;
-    --accent-dark: #077A7D;
-    --text-dark: #06202B;
-}
+/* Articles.html および各記事ページ専用スタイル */
 
-body {
-    margin: 0;
-    font-family: "Georgia", "Times New Roman", serif;
-    background-color: var(--bg-color);
-    color: var(--text-dark);
-    line-height: 1.6;
-}
-
-header {
-    background: var(--accent-dark);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 90vw;
-
-    color: white;
-    padding: 0.5rem 1rem;
-    display: flex;           
-    align-items: center;    
-    gap: 1rem;
-
-    border-radius: 1.5rem;     
-    margin: 1vw 2vw;           /* 画面端から少し余白 */
-    z-index: 10;               /* 他要素より前面 */
-    box-shadow: 0 2px 8px var(--bg-color);               
-}
-
-header img {
-    width: 50px;             /* アイコンサイズ */
-    height: 50px;
-    border-radius: 50%;      /* 丸くする */
-    border: 2px solid var(--accent-light);
-    object-fit: cover;       /* 画像がはみ出さないように */
-}
-
-header h1 {
-    margin: 0;
-    font-size: 2rem;
-}
-
-nav {
-    display: flex;
-    justify-content: right;
-    gap: 1.5rem;
-    padding: 0.8rem;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-nav a:hover {
-    color: var(--text-dark);
-}
-
-/* ===== Articles.html 用（2カラム＋背景画像あり） ===== */
+/* ===== Articles.html 用（記事一覧） ===== */
 body.articles-page {
     background-color: var(--bg-color);
 }
 
-main {
+body.articles-page main {
     margin-top: 100px;
     padding: 3rem;
     margin-left: 2rem;
@@ -81,7 +17,6 @@ main {
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-
     margin: 2rem auto;
     max-width: 700px;
     display: flex;
@@ -93,7 +28,7 @@ main {
 
 .article-list > .article-item a {
     font-size: larger;
-    color: var(--text-dark); /* リンクの色も統一 */
+    color: var(--text-dark);
     text-decoration: none;
     font-weight: bold;
 }
@@ -108,8 +43,7 @@ main {
     opacity: 0.7;
 }
 
-
-/* ===== 各記事ページ用（1カラム・背景なし） ===== */
+/* ===== 各記事ページ用（1カラム） ===== */
 body.article-page {
     background: var(--bg-color);
 }
@@ -121,7 +55,7 @@ body.article-page {
 
 .article-wrapper {
     max-width: 800px;
-    width: 90vw;               /* 画面幅の90%まで広げる */
+    width: 90vw;
     margin: 2rem auto;
     margin-top: 100px;
     background: white;
@@ -129,6 +63,11 @@ body.article-page {
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     box-sizing: border-box;
+}
+/*indexと少しデザインが違う*/
+main{
+    background-color: #F5EEDD;
+    box-shadow: none;
 }
 
 .article-wrapper h2 {
@@ -138,8 +77,6 @@ body.article-page {
     margin-bottom: 0em;
 }
 
-
-
 @media (max-width: 600px) {
     .article-wrapper {
         padding: 1rem;
@@ -147,12 +84,3 @@ body.article-page {
     }
 }
 
-/* フッター */
-footer {
-    margin-top: 2rem;
-    background: var(--text-dark);
-    color: white;
-    text-align: center;
-    padding: 1rem;
-    font-size: 0.9rem;
-}

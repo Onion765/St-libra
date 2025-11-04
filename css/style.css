@@ -1,3 +1,5 @@
+/* 共通スタイル - 全ページで使用 */
+
 /* カラーパレット */
 :root {
     --bg-color: #F5EEDD;
@@ -6,7 +8,7 @@
     --text-dark: #06202B;
 }
 
-/*全画面*/
+/* 全画面 */
 body {
     margin: 0;
     font-family: "Georgia", "Times New Roman", serif;
@@ -14,20 +16,19 @@ body {
     color: var(--text-dark);
     line-height: 1.6;
 }
-/*ヘッダー*/
+
+/* ヘッダー */
 header {
     background: var(--accent-dark);
     position: fixed;
     top: 0;
     left: 0;
     width: 90vw;
-
     color: white;
     padding: 0.5rem 1rem;
     display: flex;              
     align-items: center;
     gap: 1rem;
-
     border-radius: 1.5rem;     
     margin: 1vw 2vw;          
     z-index: 10;               
@@ -65,106 +66,59 @@ nav a:hover {
     color: var(--text-dark);
 }
 
-/*PC*/
+/* PC */
 @media (min-width: 769px) {
-  .menu-btn {
-    display: none; 
-  }
+    .menu-btn {
+        display: none; 
+    }
 
-  .nav {
-    display: flex;
-  }
+    .nav {
+        display: flex;
+    }
 }
 
 /* スマホ画面ではハンバーガーメニューに */
 @media (max-width: 768px) {
-  .menu-btn {
-    font-size: 1.8rem;
-    background-color: none;
-    border: none;
-    background-color: #077A7D;
-    color: white;
-    cursor: pointer;
-    margin-left: auto;
-  }
+    .menu-btn {
+        font-size: 1.8rem;
+        background-color: none;
+        border: none;
+        background-color: #077A7D;
+        color: white;
+        cursor: pointer;
+        margin-left: auto;
+    }
 
+    .nav {
+        display: none;
+        flex-direction: column;
+        padding: 10px;
+        position: absolute;
+        top: 60px;
+        right: 10px;
+        background: var(--accent-dark);
+        border-radius: 1.5rem;     
+        margin: 1vw 2vw;          
+        z-index: 10;               
+        box-shadow: 0 2px 8px var(--bg-color);
+    }
 
-  .nav {
-    display: none;
-    flex-direction: column;
-    padding: 10px;
-    position: absolute;
-    top: 60px;
-    right: 10px;
-    background: var(--accent-dark);
-    border-radius: 8px;
+    .nav a {
+        margin: 10px 0;
+    }
 
-    border-radius: 1.5rem;     
-    margin: 1vw 2vw;          
-    z-index: 10;               
-    box-shadow: 0 2px 8px var(--bg-color);
-  }
-
-  .nav a {
-    margin: 10px 0;
-  }
-
-  .nav.active {
-    display: flex;
-  }
+    .nav.active {
+        display: flex;
+    }
 }
 
-/*メイン画像*/
-.background_img {
-    position: relative; 
-    width: 100vw;
-    height: 100vh;
-    z-index: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.background_img img {
-    width: 100vw;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.7);
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 0;
-}
-
-.title {
-    color: var(--bg-color);
-    text-shadow: 2px 2px 5px white;
-    z-index: 1;
-    justify-content: center;
-    align-items: center;
-}
-
-.title > h1 {
-    font-size: 4rem;
-}
-
-.background_img > div {
-    position: relative;
-    z-index: 1;
-    color: #fff;
-    text-align: center;
-}
-
-/*記事などのmain部分*/
-
+/* メイン部分 */
 main {
     position: relative;
     z-index: 2;
     color: var(--text-dark);
     max-width: 800px;
-    margin: 2rem auto;
+    margin: 100px auto 2rem auto;
     padding: 2rem;
     background: rgba(255,255,255,0.85);
     border-radius: 12px;
@@ -175,39 +129,12 @@ main {
     main {
         max-width: 94vw;
         padding: 1rem;
-        margin: 1rem auto;
+        margin: 80px auto 1rem auto;
         border-radius: 8px;
     }
 }
 
-.article a {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 1rem;
-    color: var(--text-dark); 
-    text-decoration: none;
-    margin-bottom: 1.5rem;
-}
-
-.article a h3 {
-    color: var(--text-dark); 
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: bold;
-}
-
-.article .date {
-    color: var(--text-dark);
-    margin-right: 1rem;
-    margin-left: 0;
-    font-size: 1rem;
-    opacity: 0.7;
-    min-width: 100px; 
-    text-align: left;
-}
-
-/*フッター*/
+/* フッター */
 footer {
     display: flex;
     justify-content: center;
@@ -221,7 +148,7 @@ footer {
     font-size: 0.9rem;
 }
 
-footer a{
+footer a {
     color: white;
 }
 
