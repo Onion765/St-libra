@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>雪原の待機画面</title>
+<style>
+  :root{
+    --bg-top: #495aff;
+    --bg-bottom:  #0acffe;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 60%, #fff 100%);
+    overflow:hidden;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  }
+
+  /* レイアウト */
+  .stage {
+    position:relative;
+    width:100%;
+    height:100vh;
+  }
+
+  /* Canvas をフルスクリーンで重ねる */
+  canvas {
+    position:absolute;
+    inset:0;
+    display:block;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+  }
+
+  /* 中央に白い木のシルエット（SVG） */
+  .tree {
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:12vh; /* 雪原の上に立つ */
+    width:22vw;
+    max-width:420px;
+    min-width:180px;
+    /* 軽い影はCSSで、発光はSVG内フィルタで制御（両方あると自然） */
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
+    z-index:2;
+  }
+
+  /* 木の発光（SVG内の .spark クラスに対するアニメーション） */
+  .tree .spark {
+    transform-origin: center;
+    will-change: opacity, transform;
+    filter: blur(2px);
+    opacity: 0.9;
+    animation: treeGlow 2.6s ease-in-out infinite;
+  }
+
+  @keyframes treeGlow {
+    0% { opacity: 0.6; transform: scale(0.95); }
+    50% { opacity: 1; transform: scale(1.06); }
+    100% { opacity: 0.6; transform: scale(0.95); }
+  }
+
+  /* 追加の装飾用アニメーション */
+  .tree .spark-small {
+    filter: blur(1.6px);
+    opacity: 0.85;
+    animation: sparkTwinkle 1.8s ease-in-out infinite;
+  }
+
+  .tree .spark-large {
+    filter: blur(6px);
+    opacity: 0.75;
+    animation: sparkTwinkle 3.6s ease-in-out infinite;
+  }
+
+  .tree .orb {
+    mix-blend-mode: screen;
+    opacity: 0.85;
+    animation: floatY 6s ease-in-out infinite, sparkTwinkle 4s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  @keyframes sparkTwinkle {
+    0% { opacity: 0.5; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.12); }
+    100% { opacity: 0.5; transform: scale(0.9); }
+  }
+
+  @keyframes floatY {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
+  }
+
+  /* 前景の雪（白い平野） */
+  .snow-ground {
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:30vh;
+    width:100%;
+    z-index:3;
+    /* 見た目はSVG側のグラデーション/フィルタで作るので背景は無しにする */
+    background: none;
+    overflow: visible;
+  }
+
+  /* テキスト（オプション） */
+  .caption {
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:6vh;
+    z-index:4;
+    color:rgba(255,255,255,0.85);
+    font-size:1rem;
+    text-shadow:0 2px 6px rgba(0,0,0,0.6);
+    letter-spacing:0.08em;
+    user-select:none;
+  }
+
+  /* 小さめスクリーン調整 */
+  @media (max-width:520px){
+    .tree{ width:40vw; bottom:10vh; }
+    .caption{ font-size:0.85rem; bottom:4.5vh; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <!-- 星・流れ星・落ち葉を描くCanvas -->
+    <canvas id="scene"></canvas>
+
+    <!-- 白い木のシルエット（SVG） - 詳細＆発光エフェクトを追加 -->
+    <svg class="tree" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <!-- ソフトな白い発光フィルタ -->
+        <filter id="treeGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+          <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" result="cm" />
+          <feMerge>
+            <feMergeNode in="cm" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+        <!-- 内側の微かな光ハイライト用グラデ -->
+        <radialGradient id="branchGlow" cx="50%" cy="30%" r="60%">
+          <stop offset="0%" stop-color="white" stop-opacity="0.95" />
+          <stop offset="60%" stop-color="white" stop-opacity="0.4" />
+          <stop offset="100%" stop-color="white" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+
+      <!-- trunk: 少しテクスチャを与えた塗り -->
+      <g filter="url(#treeGlow)">
+        <path d="M96 260 C96 230 92 200 90 170 C86 150 90 140 100 140 C110 140 114 150 110 170 C108 200 104 230 104 260 Z"
+              fill="#ffffff" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round"/>
+
+        <!-- 枝の塊（雪を被った形で複数のフィル） -->
+        <path d="M100 140 C60 130 38 105 58 82 C64 75 76 78 84 86 C92 94 96 102 100 110 Z"
+              fill="url(#branchGlow)" opacity="0.98" />
+        <path d="M100 125 C140 118 162 95 142 72 C136 66 124 68 116 76 C108 84 104 92 100 100 Z"
+              fill="url(#branchGlow)" opacity="0.98" />
+        <path d="M100 100 C62 92 40 68 68 48 C76 42 88 44 96 52 C102 58 106 66 100 74 Z"
+              fill="url(#branchGlow)" opacity="0.98" />
+        <path d="M100 88 C128 80 150 58 136 38 C130 30 118 32 110 40 C104 46 102 54 100 60 Z"
+              fill="url(#branchGlow)" opacity="0.98" />
+
+        <!-- 小さな雪の塊や光の粒 -->
+        <g fill="white" stroke="none">
+          <ellipse class="spark spark-small" cx="60" cy="82" rx="6" ry="4.5" style="animation-delay:0.12s" />
+          <ellipse class="spark spark-small" cx="140" cy="72" rx="7" ry="5" style="animation-delay:0.4s" />
+          <ellipse class="spark spark-small" cx="70" cy="48" rx="5" ry="3.5" style="animation-delay:0.25s" />
+          <ellipse class="spark spark-small" cx="130" cy="38" rx="5" ry="3.5" style="animation-delay:0.6s" />
+          <ellipse class="spark spark-large" cx="100" cy="30" rx="8" ry="5.5" style="animation-delay:0s" />
+        </g>
+
+        <!-- 装飾オーブ（緩やかに浮遊・発光） -->
+        <g class="decor">
+          <circle class="orb" cx="48" cy="96" r="20" fill="url(#orbGrad)" filter="url(#orbGlow)" style="animation-delay:0.2s" />
+          <circle class="orb" cx="152" cy="86" r="16" fill="url(#orbGrad)" filter="url(#orbGlow)" style="animation-delay:1.1s" />
+          <circle class="orb" cx="86" cy="58" r="12" fill="url(#orbGrad)" filter="url(#orbGlow)" style="animation-delay:0.6s" />
+          <circle class="orb" cx="128" cy="44" r="10" fill="url(#orbGrad)" filter="url(#orbGlow)" style="animation-delay:0.9s" />
+        </g>
+      </g>
+    </svg>
+
+    <!-- 雪の平野（前景） - 滑らかな曲線のSVGに置き換え -->
+    <svg class="snow-ground" viewBox="0 0 1000 200" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="snowGrad" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.98)" />
+          <stop offset="100%" stop-color="rgba(255,255,255,1)" />
+        </linearGradient>
+        <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="-6" stdDeviation="12" flood-color="rgba(0,0,0,0.15)"/>
+        </filter>
+      </defs>
+      <!-- 滑らかなベジェ曲線で前景を描く。viewBox を伸縮させてレスポンシブにする -->
+      <path d="M0,80 C160,30 320,120 480,80 C640,40 800,120 1000,70 L1000,200 L0,200 Z" fill="url(#snowGrad)" filter="url(#softShadow)" />
+    </svg>
+
+  </div>
+
+<script>
+/*
+  scene canvas:
+  - background gradient is handled in CSS
+  - JS draws:
+    * stars with twinkle
+    * subtle glowing nebula near horizon
+    * periodic shooting stars (with trail)
+    * white falling "leaves" (particles) that drift & rotate (looks like snow/leaf)
+*/
+
+(() => {
+  const canvas = document.getElementById('scene');
+  const ctx = canvas.getContext('2d', { alpha: true });
+
+  // devicePixelRatio 対応
+  function resize(){
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // scale drawing to CSS pixels
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const W = () => canvas.clientWidth;
+  const H = () => canvas.clientHeight;
+
+  // ----- Stars -----
+  const starCount = Math.round((W()*H())/40000) + 80; // density scales with screen
+  const stars = [];
+  for(let i=0;i<starCount;i++){
+    stars.push({
+      x: Math.random()*W(),
+      y: Math.random()*H()*0.6, // star region top 60%
+      r: Math.random()*1.6 + 0.2,
+      a: Math.random()*0.9 + 0.1,
+      tw: Math.random()*0.02+0.01,
+      phase: Math.random()*Math.PI*2
+    });
+  }
+
+  // ----- Leaves (white particles) -----
+  const leaves = [];
+  const maxLeaves = 40;
+  function spawnLeaf(spawnX){
+    // spawn either from top or slightly above horizon; give drift
+    const x = (spawnX !== undefined) ? spawnX : Math.random()*W();
+    const y = -20;
+    return {
+      x,y,
+      vx: (Math.random()*0.8 - 0.4) * 0.6, // horizontal drift
+      vy: 0.4 + Math.random()*1.2, // fall speed
+      size: 6 + Math.random()*12,
+      rot: Math.random()*Math.PI*2,
+      vrot: (Math.random()-0.5)*0.03,
+      swayPhase: Math.random()*Math.PI*2,
+      alpha: 0.8 + Math.random()*0.2
+    };
+  }
+  // prefill a few
+  for(let i=0;i<18;i++){
+    const l = spawnLeaf();
+    l.y = Math.random()*H(); // scattered initial
+    leaves.push(l);
+  }
+
+  // ----- Shooting stars -----
+  const shootingStars = [];
+  function spawnShootingStar(){
+    // start somewhere in top-left quadrant and travel diagonally
+    const x = Math.random()*W()*0.5 + W()*0.1;
+    const y = Math.random()*H()*0.35 + 10;
+    const length = 160 + Math.random()*240;
+    const speed = 8 + Math.random()*8;
+    const angle = (Math.PI/4) + (Math.random()-0.5)*0.3; // roughly SE
+    shootingStars.push({
+      x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed,
+      life: Math.random()*60 + 80,
+      len: length,
+      trail: []
+    });
+  }
+
+  // periodic occasional spawn
+  let lastShootTime = performance.now();
+  const shootInterval = 4000 + Math.random()*5000; // ms (will randomize each spawn)
+
+  // nebula / subtle glow near horizon
+  function drawNebula(){
+    const cx = W()*0.5;
+    const cy = H()*0.6;
+    const g = ctx.createRadialGradient(cx, cy, 10, cx, cy, Math.min(W(), H())*0.6);
+    g.addColorStop(0, 'rgba(40,70,120,0.14)');
+    g.addColorStop(0.4, 'rgba(20,40,80,0.08)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.fillRect(0, H()*0.35, W(), H()*0.65);
+    ctx.fill();
+  }
+
+  // draw starfield
+  function drawStars(t){
+    for(let s of stars){
+      // twinkle
+      s.phase += s.tw;
+      const a = s.a * (0.6 + 0.4*Math.sin(s.phase + t*0.001));
+      ctx.globalAlpha = a;
+      ctx.beginPath();
+      // draw small glow
+      const rad = s.r;
+      ctx.fillStyle = 'white';
+      ctx.arc(s.x, s.y, rad, 0, Math.PI*2);
+      ctx.fill();
+      // tiny halo
+      ctx.globalAlpha = Math.min(0.12, a*0.12);
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, rad*3.5, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // draw leaves
+  function drawLeaf(p){
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = p.alpha;
+    // leaf shape: small rotated ellipse with a subtle stroke
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.size*0.6, p.size*0.9, Math.PI/8, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.fill();
+    // subtle inner highlight
+    ctx.beginPath();
+    ctx.ellipse(-p.size*0.15, -p.size*0.15, p.size*0.28, p.size*0.45, Math.PI/10, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // draw shooting star (with trail)
+  function drawShooting(s){
+    // push current head to trail
+    s.trail.unshift({x:s.x, y:s.y, life:s.life});
+    if(s.trail.length > 30) s.trail.pop();
+
+    // draw long fading trail
+    for(let i=0;i<s.trail.length;i++){
+      const p = s.trail[i];
+      const k = 1 - i/s.trail.length;
+      ctx.globalAlpha = 0.18 * k;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      // next point for line
+      const nx = p.x + Math.cos(0.75*Math.PI) * s.len * 0.02 * (1 + i*0.02);
+      const ny = p.y + Math.sin(0.75*Math.PI) * s.len * 0.02 * (1 + i*0.02);
+      ctx.lineTo(nx, ny);
+      ctx.lineWidth = 2 + 6*k;
+      ctx.strokeStyle = 'white';
+      ctx.stroke();
+    }
+
+    // head (bright)
+    ctx.globalAlpha = 1.0;
+    ctx.beginPath();
+    ctx.fillStyle = 'white';
+    ctx.arc(s.x, s.y, 2.6, 0, Math.PI*2);
+    ctx.fill();
+
+    // glow
+    ctx.globalAlpha = 0.14;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, 10, 0, Math.PI*2);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+
+    ctx.globalAlpha = 1;
+  }
+
+  // main animation
+  let last = performance.now();
+  function frame(now){
+    const dt = now - last;
+    last = now;
+
+    // adapt canvas dimensions if CSS size changed (for responsive)
+    // (cheap check)
+    if (canvas.width !== Math.floor(canvas.clientWidth * (window.devicePixelRatio || 1))
+      || canvas.height !== Math.floor(canvas.clientHeight * (window.devicePixelRatio || 1))) {
+      resize();
+    }
+
+    // clear with subtle transparency for motion blur feel
+    ctx.clearRect(0,0,W(),H());
+
+    // draw nebula / glow
+    drawNebula();
+
+    // stars
+    drawStars(now);
+
+    // update and draw leaves
+    // spawn a few per second
+    if(leaves.length < maxLeaves && Math.random() < 0.06) leaves.push(spawnLeaf());
+    for (let i = leaves.length - 1; i >= 0; i--){
+      const p = leaves[i];
+      // sway horizontal using sine wave
+      p.swayPhase += 0.008 + Math.random()*0.006;
+      p.x += p.vx + Math.sin(p.swayPhase)*0.4;
+      p.y += p.vy;
+      p.rot += p.vrot;
+      // fade near ground
+      if(p.y > H() - H()*0.18){
+        p.alpha -= 0.02;
+      }
+      // remove if gone
+      if(p.y > H() + 50 || p.alpha <= 0.02 || p.x < -80 || p.x > W()+80){
+        leaves.splice(i,1);
+        continue;
+      }
+      drawLeaf(p);
+    }
+
+    // occasional spawn from tree top (simulate leaves falling from tree)
+    if(Math.random() < 0.02){
+      // spawn near tree center
+      const treeElem = document.querySelector('.tree');
+      if(treeElem){
+        const rect = treeElem.getBoundingClientRect();
+        const spawnX = rect.left + rect.width*0.5 + (Math.random()-0.5)*rect.width*0.5;
+        leaves.push(spawnLeaf(spawnX));
+      } else {
+        leaves.push(spawnLeaf());
+      }
+    }
+
+    // update and draw shooting stars
+    // spawn occasionally
+    if(now - lastShootTime > (2000 + Math.random()*8000)){
+      spawnShootingStar();
+      lastShootTime = now;
+    }
+    for (let i = shootingStars.length - 1; i >= 0; i--){
+      const s = shootingStars[i];
+      // move
+      s.x += s.vx;
+      s.y += s.vy;
+      s.life--;
+      drawShooting(s);
+      // keep trail length bounded
+      if(s.life <= 0 || s.x > W()+200 || s.y > H()+200){
+        shootingStars.splice(i,1);
+      }
+    }
+
+    // subtle vignette
+    ctx.globalCompositeOperation = 'source-over';
+    const vignette = ctx.createRadialGradient(W()/2, H()/2, Math.min(W(), H())*0.5, W()/2, H()/2, Math.max(W(), H()));
+    vignette.addColorStop(0, 'rgba(0,0,0,0)');
+    vignette.addColorStop(1, 'rgba(0,0,0,0.35)');
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0,0,W(),H());
+
+    requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+
+})();
+</script>
+</body>
+</html>
