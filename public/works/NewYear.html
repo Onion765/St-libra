@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>本格おみくじアニメーション</title>
+    <style>
+        body { text-align: center; background-color: #f4f1ea; font-family: "Sawarabi Mincho", serif; }
+        canvas { cursor: pointer; max-width: 100%; }
+        .controls { margin-top: 20px; }
+        .probability-controls {
+            display: inline-block;
+            text-align: left;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .prob-item {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .prob-item label {
+            width: 80px;
+            font-weight: bold;
+        }
+        .prob-item input[type="range"] {
+            width: 200px;
+        }
+        .prob-item .percentage {
+            width: 50px;
+            text-align: right;
+            font-weight: bold;
+            color: #a32e2e;
+        }
+        button {
+            padding: 10px 30px;
+            font-size: 1.2rem;
+            background-color: #a32e2e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:disabled { background-color: #ccc; }
+    </style>
+</head>
+<body>
+
+    <h1>御神籤</h1>
+    <canvas id="omikujiCanvas" width="600" height="700"></canvas>
+    
+    <div class="controls">
+        <button id="drawBtn" onclick="startAnimation()">おみくじを振る</button>
+    </div>
+
+    <div class="probability-controls">
+        <h3 style="margin-top: 0;">確率設定</h3>
+        <div class="prob-item">
+            <label>Coming:</label>
+            <input type="range" id="probComing" min="0" max="100" value="33" oninput="updateProbabilities()">
+            <span class="percentage" id="percentComing">33%</span>
+        </div>
+        <div class="prob-item">
+            <label>Of:</label>
+            <input type="range" id="probOf" min="0" max="100" value="33" oninput="updateProbabilities()">
+            <span class="percentage" id="percentOf">33%</span>
+        </div>
+        <div class="prob-item">
+            <label>Year:</label>
+            <input type="range" id="probYear" min="0" max="100" value="34" oninput="updateProbabilities()">
+            <span class="percentage" id="percentYear">34%</span>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('omikujiCanvas');
+        const ctx = canvas.getContext('2d');
+        const drawBtn = document.getElementById('drawBtn');
+
+        const results = ["Coming", "Of", "Year"];
+        let animationFrame;
+        let state = 'idle'; 
+        let shakeCount = 0;
+        let stickY = 0;
+        let currentResult = "";
+        let probabilities = [33, 33, 34]; // Coming, Of, Year
+
+        function updateProbabilities() {
+            const coming = parseInt(document.getElementById('probComing').value);
+            const of = parseInt(document.getElementById('probOf').value);
+            const year = parseInt(document.getElementById('probYear').value);
+            
+            const total = coming + of + year;
+            
+            // パーセンテージを計算して表示
+            const comingPercent = total > 0 ? Math.round((coming / total) * 100) : 0;
+            const ofPercent = total > 0 ? Math.round((of / total) * 100) : 0;
+            const yearPercent = total > 0 ? 100 - comingPercent - ofPercent : 0;
+            
+            document.getElementById('percentComing').textContent = comingPercent + '%';
+            document.getElementById('percentOf').textContent = ofPercent + '%';
+            document.getElementById('percentYear').textContent = yearPercent + '%';
+            
+            probabilities = [coming, of, year];
+        }
+
+        function getWeightedRandomResult() {
+            const total = probabilities.reduce((sum, prob) => sum + prob, 0);
+            if (total === 0) return results[0];
+            
+            let random = Math.random() * total;
+            
+            for (let i = 0; i < probabilities.length; i++) {
+                random -= probabilities[i];
+                if (random <= 0) {
+                    return results[i];
+                }
+            }
+            
+            return results[results.length - 1];
+        }
+
+        function drawCylinder(angle) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            ctx.translate(300, 500); // 筒の底を基準に回転
+            ctx.rotate(angle);
+
+            // 棒（飛び出す時だけ描画）
+            if (state === 'popping' || state === 'finished') {
+                ctx.fillStyle = "#f3e5ab";
+                ctx.fillRect(-10, -180 - stickY, 20, 150);
+                if (state === 'finished') {
+                    ctx.fillStyle = "#000";
+                    ctx.font = "bold 48px 'Sawarabi Mincho', serif";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText(currentResult, 0, -320);
+                }
+            }
+
+            // 筒本体
+            ctx.fillStyle = "#8b4513";
+            ctx.beginPath();
+            ctx.moveTo(-40, 0);
+            ctx.lineTo(-50, -180);
+            ctx.lineTo(50, -180);
+            ctx.lineTo(40, 0);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 筒の模様（帯）
+            ctx.fillStyle = "#a32e2e";
+            ctx.fillRect(-45, -140, 90, 20);
+            
+            ctx.restore();
+        }
+
+        function animate() {
+            if (state === 'shaking') {
+                shakeCount++;
+                const angle = Math.sin(shakeCount * 0.5) * 0.2;
+                drawCylinder(angle);
+                if (shakeCount > 60) {
+                    state = 'popping';
+                }
+                animationFrame = requestAnimationFrame(animate);
+            } else if (state === 'popping') {
+                stickY += 5;
+                drawCylinder(0.3); // 少し傾けて出す
+                if (stickY > 80) {
+                    state = 'finished';
+                    drawCylinder(0); // 最終描画（テキスト表示）
+                } else {
+                    animationFrame = requestAnimationFrame(animate);
+                }
+            }
+        }
+
+        function startAnimation() {
+            drawBtn.disabled = true;
+            state = 'shaking';
+            shakeCount = 0;
+            stickY = 0;
+            currentResult = getWeightedRandomResult();
+            animate();
+        }
+
+        // 初期描画
+        drawCylinder(0);
+    </script>
+</body>
+</html>
